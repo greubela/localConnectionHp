@@ -16,20 +16,36 @@ object Main:
   private var routes: Seq[js.Dynamic] = Seq.empty
   private var activeIds: Set[String] = Set.empty
   private var timer: Int = 0
+  private var isRefreshing: Boolean = false
 
   def main(args: Array[String]): Unit =
-    loadJson("routes.json").foreach { cfg =>
+    val startup = for
+      cfg <- loadJson("config.json")
+      routeCfg <- loadJson("routes.json")
+    yield (cfg, routeCfg)
+
+    startup.foreach { case (cfg, routeCfg) =>
       config = cfg
-      routes = cfg.routes.asInstanceOf[js.Array[js.Dynamic]].toSeq
+      routes = routeCfg.routes.asInstanceOf[js.Array[js.Dynamic]].toSeq
       activeIds = routes.map(_.id.asInstanceOf[String]).toSet
       drawControls()
       refresh()
       timer = dom.window.setInterval(() => refresh(), refreshMs())
     }
+    startup.recover { case e =>
+      status.textContent = s"Could not load configuration: ${e.getMessage}"
+      cards.innerHTML = ""
+      cards.appendChild(message("error", "Check that config.json and routes.json are available."))
+    }
 
   private def refreshMs(): Int =
     val seconds = optNum(config.refreshSeconds).getOrElse(60.0)
-    (seconds * 1000).toInt.max(15_000)
+    val minimumSeconds = optNum(config.minimumRefreshSeconds).getOrElse(15.0)
+    (seconds.max(minimumSeconds) * 1000).toInt
+
+  private def requestTimeoutMs(): Int =
+    val seconds = if config == null then 25.0 else optNum(config.requestTimeoutSeconds).getOrElse(25.0)
+    (seconds * 1000).toInt.max(1_000)
 
   private def drawControls(): Unit =
     controls.innerHTML = ""
@@ -46,6 +62,10 @@ object Main:
     }
 
   private def refresh(): Unit =
+    if isRefreshing then
+      status.textContent = s"Still updating… ${clock()}"
+      return
+
     val selected = routes.filter(r => activeIds(r.id.asInstanceOf[String]))
     status.textContent = "Updating…"
     cards.innerHTML = ""
@@ -53,11 +73,14 @@ object Main:
       cards.appendChild(message("empty", "Select at least one route."))
       status.textContent = "No route selected"
     else
+      isRefreshing = true
       selected.foreach { r => cards.appendChild(routeShell(r)) }
-      selected.foreach { r => loadRoute(r) }
-      status.textContent = s"Updated ${clock()}"
+      Future.sequence(selected.map(loadRoute)).foreach { _ =>
+        isRefreshing = false
+        status.textContent = s"Updated ${clock()}"
+      }
 
-  private def loadRoute(route: js.Dynamic): Unit =
+  private def loadRoute(route: js.Dynamic): Future[Unit] =
     val id = route.id.asInstanceOf[String]
     val result = for
       from <- stopId(route.from)
@@ -65,15 +88,14 @@ object Main:
       journeys <- loadJson(journeyUrl(route, from, to))
     yield journeys
 
-    result.foreach { data =>
+    result.map { data =>
       val container = doc.getElementById(s"body-$id")
       if container != null then
         container.innerHTML = ""
         val jsJourneys = data.journeys.asInstanceOf[js.UndefOr[js.Array[js.Dynamic]]].toOption.getOrElse(js.Array())
         if jsJourneys.isEmpty then container.appendChild(message("empty", "No connection found right now."))
         else jsJourneys.foreach(j => container.appendChild(connectionRow(j)))
-    }
-    result.recover { case e =>
+    }.recover { case e =>
       val container = doc.getElementById(s"body-$id")
       if container != null then
         container.innerHTML = ""
@@ -142,9 +164,16 @@ object Main:
     div
 
   private def loadJson(url: String): Future[js.Dynamic] =
-    dom.fetch(url).toFuture.flatMap { r =>
+    val controller = new dom.AbortController()
+    val timeout = dom.window.setTimeout(() => controller.abort(), requestTimeoutMs())
+    val init = js.Dynamic.literal("signal" -> controller.signal).asInstanceOf[dom.RequestInit]
+    dom.fetch(url, init).toFuture.flatMap { r =>
+      dom.window.clearTimeout(timeout)
       if r.ok then r.text().toFuture.map(t => js.JSON.parse(t))
       else scala.concurrent.Future.failed(RuntimeException(s"HTTP ${r.status.toInt}"))
+    }.recoverWith { case e =>
+      dom.window.clearTimeout(timeout)
+      scala.concurrent.Future.failed(e)
     }
 
   private def query(values: js.Dictionary[Any]): String =

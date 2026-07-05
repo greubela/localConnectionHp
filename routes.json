@@ -1,6 +1,4 @@
 {
-  "refreshSeconds": 60,
-  "apiBase": "https://v6.vbb.transport.rest",
   "routes": [
     {
       "id": "rudow",
