@@ -11,6 +11,19 @@ python3 -m http.server 8080
 
 Open <http://localhost:8080>.
 
+## Configure refresh behavior
+
+Edit `config.json` to set shared application settings. `refreshSeconds` controls how often the board automatically reloads all active routes; `minimumRefreshSeconds` guards against accidental rapid polling, and `requestTimeoutSeconds` aborts slow route loads before they can pile up.
+
+```json
+{
+  "apiBase": "https://v6.vbb.transport.rest",
+  "refreshSeconds": 60,
+  "minimumRefreshSeconds": 15,
+  "requestTimeoutSeconds": 25
+}
+```
+
 ## Configure routes
 
 Edit `routes.json`. Routes may use stop IDs or names. Names are resolved via `/locations` at runtime; IDs are faster and more stable.
@@ -30,5 +43,5 @@ If a route resolves to the wrong stop, query `https://v6.vbb.transport.rest/loca
 ## Notes
 
 - Uses `https://v6.vbb.transport.rest`, a REST wrapper around VBB/HAFAS data.
-- Refreshes every 60 seconds by default; adjust `refreshSeconds`.
+- Refreshes every 60 seconds by default; adjust `refreshSeconds` in `config.json`.
 - The code is intentionally compact and script-like. API access is concentrated in `loadJson`, `stopId`, and `journeyUrl`.
