@@ -1,0 +1,22 @@
+{
+  "refreshSeconds": 60,
+  "apiBase": "https://v6.vbb.transport.rest",
+  "routes": [
+    {
+      "id": "rudow",
+      "title": "Magnusstr. → U Rudow",
+      "from": { "name": "Magnusstr. (Berlin)" },
+      "to": { "name": "U Rudow (Berlin)" },
+      "results": 4,
+      "products": { "bus": true, "subway": true, "suburban": false, "tram": false, "ferry": false, "express": false, "regional": false }
+    },
+    {
+      "id": "schwimmhalle",
+      "title": "Magnusstr. → Schwimmhalle Schönefeld",
+      "from": { "name": "Magnusstr. (Berlin)" },
+      "to": { "name": "Schwimmhalle (Schönefeld)" },
+      "results": 4,
+      "products": { "bus": true, "subway": true, "suburban": false, "tram": false, "ferry": false, "express": false, "regional": false }
+    }
+  ]
+}
