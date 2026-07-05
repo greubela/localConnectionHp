@@ -2,9 +2,9 @@ package busboard
 
 import org.scalajs.dom
 import org.scalajs.dom.{Document, Element}
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js
-import scala.scalajs.js.Dynamic.literal
 
 object Main:
   private val doc: Document = dom.document
@@ -36,7 +36,7 @@ object Main:
     routes.foreach { route =>
       val id = route.id.asInstanceOf[String]
       val button = doc.createElement("button")
-      button.className = s"route-toggle ${if activeIds(id) then "active" else ""}"
+      button.setAttribute("class", s"route-toggle ${if activeIds(id) then "active" else ""}")
       button.textContent = route.title.asInstanceOf[String]
       button.addEventListener("click", _ =>
         activeIds = if activeIds(id) then activeIds - id else activeIds + id
@@ -59,17 +59,21 @@ object Main:
 
   private def loadRoute(route: js.Dynamic): Unit =
     val id = route.id.asInstanceOf[String]
-    (for
+    val result = for
       from <- stopId(route.from)
       to <- stopId(route.to)
       journeys <- loadJson(journeyUrl(route, from, to))
-    yield (from, to, journeys)).foreach { (_, _, data) =>
+    yield journeys
+
+    result.foreach { data =>
       val container = doc.getElementById(s"body-$id")
-      container.innerHTML = ""
-      val jsJourneys = data.journeys.asInstanceOf[js.UndefOr[js.Array[js.Dynamic]]].toOption.getOrElse(js.Array())
-      if jsJourneys.isEmpty then container.appendChild(message("empty", "No connection found right now."))
-      else jsJourneys.foreach(j => container.appendChild(connectionRow(j)))
-    }.recover { case e =>
+      if container != null then
+        container.innerHTML = ""
+        val jsJourneys = data.journeys.asInstanceOf[js.UndefOr[js.Array[js.Dynamic]]].toOption.getOrElse(js.Array())
+        if jsJourneys.isEmpty then container.appendChild(message("empty", "No connection found right now."))
+        else jsJourneys.foreach(j => container.appendChild(connectionRow(j)))
+    }
+    result.recover { case e =>
       val container = doc.getElementById(s"body-$id")
       if container != null then
         container.innerHTML = ""
@@ -89,11 +93,11 @@ object Main:
       "pretty" -> false
     )
     optObj(route.products).foreach { products =>
-      js.Object.keys(products).foreach(k => params(k) = products.selectDynamic(k).asInstanceOf[Any])
+      js.Object.keys(products.asInstanceOf[js.Object]).foreach(k => params(k) = products.selectDynamic(k).asInstanceOf[Any])
     }
     s"$base/journeys?${query(params)}"
 
-  private def stopId(stop: js.Dynamic) =
+  private def stopId(stop: js.Dynamic): Future[String] =
     optStr(stop.id).map(id => scala.concurrent.Future.successful(id)).getOrElse {
       val base = config.apiBase.asInstanceOf[String]
       val name = stop.name.asInstanceOf[String]
@@ -104,7 +108,7 @@ object Main:
   private def routeShell(route: js.Dynamic): Element =
     val id = route.id.asInstanceOf[String]
     val div = doc.createElement("article")
-    div.className = "card"
+    div.setAttribute("class", "card")
     div.innerHTML =
       s"""
       <div class="card-head">
@@ -122,13 +126,13 @@ object Main:
     val legs = j.legs.asInstanceOf[js.Array[js.Dynamic]].toSeq
     val first = legs.head
     val dep = date(first.departure)
-    val planned = optStr(first.plannedDeparture).map(date)
+    val planned = optStr(first.plannedDeparture).map(s => date(s))
     val delayMin = optNum(first.departureDelay).map(_ / 60).orElse(optNum(first.delay).map(_ / 60)).getOrElse(0.0).round.toInt
     val lines = legs.flatMap(l => optObj(l.line).flatMap(line => optStr(line.name))).distinct.mkString(" · ")
     val changes = (legs.size - 1).max(0)
     val duration = minutesBetween(j.departure, j.arrival)
     val div = doc.createElement("div")
-    div.className = "connection"
+    div.setAttribute("class", "connection")
     div.innerHTML =
       s"""
       <div class="time">${hhmm(dep)}<span class="delay ${if delayMin > 0 then "late" else ""}">${delayText(delayMin, planned)}</span></div>
@@ -137,7 +141,7 @@ object Main:
       """
     div
 
-  private def loadJson(url: String) =
+  private def loadJson(url: String): Future[js.Dynamic] =
     dom.fetch(url).toFuture.flatMap { r =>
       if r.ok then r.text().toFuture.map(t => js.JSON.parse(t))
       else scala.concurrent.Future.failed(RuntimeException(s"HTTP ${r.status.toInt}"))
@@ -156,7 +160,7 @@ object Main:
   private def esc(s: String): String =
     val e = doc.createElement("span"); e.textContent = s; e.innerHTML
   private def message(cls: String, text: String): Element =
-    val div = doc.createElement("div"); div.className = cls; div.textContent = text; div
+    val div = doc.createElement("div"); div.setAttribute("class", cls); div.textContent = text; div
   private def optStr(x: js.Any): Option[String] = if js.isUndefined(x) || x == null then None else Some(x.asInstanceOf[String])
   private def optNum(x: js.Any): Option[Double] = if js.isUndefined(x) || x == null then None else Some(x.asInstanceOf[Double])
   private def optObj(x: js.Any): Option[js.Dynamic] = if js.isUndefined(x) || x == null then None else Some(x.asInstanceOf[js.Dynamic])
