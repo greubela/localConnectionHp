@@ -38,6 +38,22 @@ Edit `routes.json`. Routes may use stop IDs or names. Names are resolved via `/l
 }
 ```
 
+
+Routes can force a precise multi-stop path by adding `waypoints` (or `via`). The app loads each leg in order, using the previous leg arrival as the next leg departure, and displays several complete arrival options with live delay information for every leg.
+
+```json
+{
+  "id": "via-rudow",
+  "title": "Magnusstr. → Rudow → Schwimmhalle",
+  "from": { "name": "Magnusstr. (Berlin)", "id": "900194501" },
+  "waypoints": [
+    { "name": "U Rudow (Berlin)", "id": "900083201" }
+  ],
+  "to": { "name": "Schwimmhalle (Schönefeld)", "id": "900260519" },
+  "results": 4
+}
+```
+
 If a route resolves to the wrong stop, query `https://v6.vbb.transport.rest/locations?query=...` once, copy the stop `id`, and add it to `routes.json`.
 
 ## Notes
