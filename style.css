@@ -46,3 +46,13 @@ h1 { margin: 2px 0 0; font-size: clamp(1.7rem, 5vw, 3.2rem); letter-spacing: -0.
   .connection { grid-template-columns: 64px 1fr; }
   .duration { grid-column: 2; justify-self: start; margin-top: -8px; }
 }
+.legs { display: grid; gap: 6px; margin-top: 8px; }
+.leg { display: grid; grid-template-columns: minmax(150px, 1.2fr) auto minmax(100px, 1fr) auto; gap: 8px; align-items: center; color: var(--muted); font-size: 0.78rem; }
+.leg span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.leg strong { color: var(--ink); font-size: 0.8rem; }
+.leg em { font-style: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.leg small { font-size: 0.72rem; font-weight: 800; }
+@media (max-width: 640px) {
+  .leg { grid-template-columns: 1fr auto; }
+  .leg em, .leg small { grid-column: 1 / -1; }
+}

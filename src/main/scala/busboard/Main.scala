@@ -80,21 +80,22 @@ object Main:
         status.textContent = s"Updated ${clock()}"
       }
 
+  private case class RoutePoint(id: String, name: String)
+  private case class RouteOption(segments: Seq[js.Dynamic])
+
   private def loadRoute(route: js.Dynamic): Future[Unit] =
     val id = route.id.asInstanceOf[String]
     val result = for
-      from <- stopId(route.from)
-      to <- stopId(route.to)
-      journeys <- loadJson(journeyUrl(route, from, to))
-    yield journeys
+      points <- routePoints(route)
+      options <- loadOptions(route, points)
+    yield (points, options)
 
-    result.map { data =>
+    result.map { case (points, options) =>
       val container = doc.getElementById(s"body-$id")
       if container != null then
         container.innerHTML = ""
-        val jsJourneys = data.journeys.asInstanceOf[js.UndefOr[js.Array[js.Dynamic]]].toOption.getOrElse(js.Array())
-        if jsJourneys.isEmpty then container.appendChild(message("empty", "No connection found right now."))
-        else jsJourneys.foreach(j => container.appendChild(connectionRow(j)))
+        if options.isEmpty then container.appendChild(message("empty", "No connection found right now."))
+        else options.foreach(o => container.appendChild(connectionRow(o, points)))
     }.recover { case e =>
       val container = doc.getElementById(s"body-$id")
       if container != null then
@@ -102,7 +103,33 @@ object Main:
         container.appendChild(message("error", s"Could not load this route: ${e.getMessage}"))
     }
 
-  private def journeyUrl(route: js.Dynamic, from: String, to: String): String =
+  private def routePoints(route: js.Dynamic): Future[Seq[RoutePoint]] =
+    val rawStops = Seq(route.from) ++ waypoints(route) ++ Seq(route.to)
+    Future.sequence(rawStops.map(s => stopId(s).map(id => RoutePoint(id, s.name.asInstanceOf[String]))))
+
+  private def waypoints(route: js.Dynamic): Seq[js.Dynamic] =
+    optArray(route.waypoints).orElse(optArray(route.via)).map(_.toSeq).getOrElse(Seq.empty)
+
+  private def loadOptions(route: js.Dynamic, points: Seq[RoutePoint]): Future[Seq[RouteOption]] =
+    if points.size < 2 then Future.successful(Seq.empty)
+    else
+      loadJson(journeyUrl(route, points.head.id, points(1).id, None)).flatMap { data =>
+        val firstChoices = journeysFrom(data).toSeq
+        Future.sequence(firstChoices.map(first => extendOption(route, points, 1, Seq(first))))
+          .map(_.flatten.sortBy(o => date(o.segments.head.departure).getTime()))
+      }
+
+  private def extendOption(route: js.Dynamic, points: Seq[RoutePoint], nextPointIdx: Int, acc: Seq[js.Dynamic]): Future[Option[RouteOption]] =
+    if nextPointIdx >= points.size - 1 then Future.successful(Some(RouteOption(acc)))
+    else
+      val after = optStr(acc.last.arrival).orElse(lastLegTime(acc.last, "arrival"))
+      loadJson(journeyUrl(route, points(nextPointIdx).id, points(nextPointIdx + 1).id, after)).flatMap { data =>
+        journeysFrom(data).toSeq.headOption match
+          case Some(next) => extendOption(route, points, nextPointIdx + 1, acc :+ next)
+          case None => Future.successful(None)
+      }
+
+  private def journeyUrl(route: js.Dynamic, from: String, to: String, departure: Option[String]): String =
     val base = config.apiBase.asInstanceOf[String]
     val results = optNum(route.results).getOrElse(4.0).toInt
     val params = js.Dictionary[Any](
@@ -110,10 +137,11 @@ object Main:
       "to" -> to,
       "results" -> results,
       "language" -> "de",
-      "stopovers" -> false,
-      "remarks" -> false,
+      "stopovers" -> true,
+      "remarks" -> true,
       "pretty" -> false
     )
+    departure.foreach(d => params("departure") = d)
     optObj(route.products).foreach { products =>
       js.Object.keys(products.asInstanceOf[js.Object]).foreach(k => params(k) = products.selectDynamic(k).asInstanceOf[Any])
     }
@@ -136,7 +164,7 @@ object Main:
       <div class="card-head">
         <div>
           <h2 class="route-title">${esc(route.title.asInstanceOf[String])}</h2>
-          <p class="route-subtitle">${esc(route.from.name.asInstanceOf[String])} → ${esc(route.to.name.asInstanceOf[String])}</p>
+          <p class="route-subtitle">${esc(routePointNames(route).mkString(" → "))}</p>
         </div>
         <div class="badge">VBB</div>
       </div>
@@ -144,21 +172,31 @@ object Main:
       """
     div
 
-  private def connectionRow(j: js.Dynamic): Element =
-    val legs = j.legs.asInstanceOf[js.Array[js.Dynamic]].toSeq
-    val first = legs.head
+  private def routePointNames(route: js.Dynamic): Seq[String] =
+    (Seq(route.from) ++ waypoints(route) ++ Seq(route.to)).map(_.name.asInstanceOf[String])
+
+  private def connectionRow(option: RouteOption, points: Seq[RoutePoint]): Element =
+    val journeys = option.segments
+    val allLegs = journeys.flatMap(j => j.legs.asInstanceOf[js.Array[js.Dynamic]].toSeq)
+    val first = allLegs.head
+    val last = allLegs.last
     val dep = date(first.departure)
-    val planned = optStr(first.plannedDeparture).map(s => date(s))
-    val delayMin = optNum(first.departureDelay).map(_ / 60).orElse(optNum(first.delay).map(_ / 60)).getOrElse(0.0).round.toInt
-    val lines = legs.flatMap(l => optObj(l.line).flatMap(line => optStr(line.name))).distinct.mkString(" · ")
-    val changes = (legs.size - 1).max(0)
-    val duration = minutesBetween(j.departure, j.arrival)
+    val arr = date(last.arrival)
+    val delayMin = delayMinutes(first, "departure")
+    val lines = allLegs.flatMap(l => optObj(l.line).flatMap(line => optStr(line.name))).distinct.mkString(" · ")
+    val changes = (allLegs.count(l => optObj(l.line).isDefined) - 1).max(0)
+    val duration = ((arr.getTime() - dep.getTime()) / 60000).round.toInt
+    val waypointInfo = waypointText(points.size - 2)
     val div = doc.createElement("div")
     div.setAttribute("class", "connection")
     div.innerHTML =
       s"""
-      <div class="time">${hhmm(dep)}<span class="delay ${if delayMin > 0 then "late" else ""}">${delayText(delayMin, planned)}</span></div>
-      <div class="path"><div class="line">${esc(if lines.nonEmpty then lines else "Connection")}</div><div class="meta">${changesText(changes)} · arrives ${hhmm(date(j.arrival))}</div></div>
+      <div class="time">${hhmm(dep)}<span class="delay ${if delayMin > 0 then "late" else ""}">${delayText(delayMin)}</span></div>
+      <div class="path">
+        <div class="line">${esc(if lines.nonEmpty then lines else "Connection")}</div>
+        <div class="meta">${esc(changesText(changes))} · arrives ${hhmm(arr)}${waypointInfo}</div>
+        <div class="legs">${segmentSummary(journeys, points)}</div>
+      </div>
       <div class="duration">${duration} min</div>
       """
     div
@@ -184,7 +222,29 @@ object Main:
   private def clock(): String = hhmm(new js.Date())
   private def minutesBetween(a: js.Any, b: js.Any): Int = ((date(b).getTime() - date(a).getTime()) / 60000).round.toInt
   private def changesText(n: Int) = if n == 0 then "direct" else s"$n change${if n == 1 then "" else "s"}"
-  private def delayText(min: Int, planned: Option[js.Date]) = if min == 0 then "on time" else s"+$min min"
+  private def delayText(min: Int) = if min == 0 then "on time" else if min > 0 then s"+$min min" else s"$min min"
+  private def waypointText(count: Int): String = if count <= 0 then "" else s" · $count waypoint${if count == 1 then "" else "s"}"
+  private def segmentSummary(journeys: Seq[js.Dynamic], points: Seq[RoutePoint]): String =
+    journeys.zipWithIndex.map { case (j, idx) =>
+      val legs = j.legs.asInstanceOf[js.Array[js.Dynamic]].toSeq
+      val dep = date(legs.head.departure)
+      val arr = date(legs.last.arrival)
+      val legLines = legs.flatMap(l => optObj(l.line).flatMap(line => optStr(line.name))).distinct.mkString(" · ")
+      val delay = delayMinutes(legs.head, "departure")
+      val delayClass = if delay > 0 then " late" else ""
+      s"<div class=\"leg\"><span>${esc(points(idx).name)} → ${esc(points(idx + 1).name)}</span><strong>${hhmm(dep)}–${hhmm(arr)}</strong><em>${esc(if legLines.nonEmpty then legLines else "walk/transfer")}</em><small class=\"delay$delayClass\">${delayText(delay)}</small></div>"
+    }.mkString
+
+  private def journeysFrom(data: js.Dynamic): js.Array[js.Dynamic] =
+    data.journeys.asInstanceOf[js.UndefOr[js.Array[js.Dynamic]]].toOption.getOrElse(js.Array())
+
+  private def lastLegTime(j: js.Dynamic, field: String): Option[String] =
+    val legs = j.legs.asInstanceOf[js.Array[js.Dynamic]].toSeq
+    if legs.isEmpty then None else optStr(legs.last.selectDynamic(field))
+
+  private def delayMinutes(leg: js.Dynamic, prefix: String): Int =
+    val field = if prefix == "arrival" then leg.arrivalDelay else leg.departureDelay
+    optNum(field).map(_ / 60).orElse(optNum(leg.delay).map(_ / 60)).getOrElse(0.0).round.toInt
   private def enc(s: String): String = js.URIUtils.encodeURIComponent(s)
   private def esc(s: String): String =
     val e = doc.createElement("span"); e.textContent = s; e.innerHTML
@@ -193,3 +253,4 @@ object Main:
   private def optStr(x: js.Any): Option[String] = if js.isUndefined(x) || x == null then None else Some(x.asInstanceOf[String])
   private def optNum(x: js.Any): Option[Double] = if js.isUndefined(x) || x == null then None else Some(x.asInstanceOf[Double])
   private def optObj(x: js.Any): Option[js.Dynamic] = if js.isUndefined(x) || x == null then None else Some(x.asInstanceOf[js.Dynamic])
+  private def optArray(x: js.Any): Option[js.Array[js.Dynamic]] = if js.isUndefined(x) || x == null then None else Some(x.asInstanceOf[js.Array[js.Dynamic]])
