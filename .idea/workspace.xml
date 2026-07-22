@@ -4,14 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="10d21990-89b4-46e2-be64-f34fa47f98be" name="Changes" comment="Added Gitignore" />
+    <list default="true" id="10d21990-89b4-46e2-be64-f34fa47f98be" name="Changes" comment="new workplace init">
+      <change beforePath="$PROJECT_DIR$/.idea/modules/localConnectionHp/bus-homepage.bus-homepage-build.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/localConnectionHp/bus-homepage.bus-homepage-build.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="33" />
+    <option name="cachedIndexableFilesCount" value="32" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="ExternalProjectsData">
@@ -46,23 +49,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0673212379277026" />
-      <entry key="MS500" value="1.8723551404052912" />
-      <entry key="S2" value="2.6082210635835663" />
-      <entry key="S5" value="2.831385318042561" />
-      <entry key="S10" value="2.9135596458895145" />
-      <entry key="S30" value="2.9706977745399783" />
-      <entry key="S60" value="2.9852868423546415" />
-      <entry key="M2" value="2.992627837879411" />
-      <entry key="M5" value="2.997047385894847" />
-      <entry key="M10" value="2.9985230672974548" />
-      <entry key="M15" value="2.999015239107597" />
-      <entry key="M30" value="2.999507549994094" />
-      <entry key="H1" value="2.9997537576044295" />
-      <entry key="H2" value="2.999876874453724" />
-      <entry key="H4" value="2.999938436139697" />
-      <entry key="D1" value="2.999989739205618" />
-      <entry key="W1" value="2.999998534168533" />
+      <entry key="MS100" value="1.2606164402102804" />
+      <entry key="MS500" value="1.7641882603825834" />
+      <entry key="S2" value="1.9349755151057355" />
+      <entry key="S5" value="1.9800347467603991" />
+      <entry key="S10" value="2.1677285349231203" />
+      <entry key="S30" value="3.649468159435881" />
+      <entry key="S60" value="4.873397624599901" />
+      <entry key="M2" value="5.790713336981567" />
+      <entry key="M5" value="6.4758709699598285" />
+      <entry key="M10" value="6.730693811753594" />
+      <entry key="M15" value="6.818813523171758" />
+      <entry key="M30" value="6.908572082583135" />
+      <entry key="H1" value="6.954075442596974" />
+      <entry key="H2" value="6.976984828556228" />
+      <entry key="H4" value="6.9884791605862135" />
+      <entry key="D1" value="6.998078016712162" />
+      <entry key="W1" value="6.9997253857808674" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -84,23 +87,23 @@
       <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9392187414952002" />
-      <entry key="MS500" value="1.7112665253918937" />
-      <entry key="S2" value="2.5168803039330396" />
-      <entry key="S5" value="2.7876868386597358" />
-      <entry key="S10" value="2.8903451698856655" />
-      <entry key="S30" value="2.9626385331465848" />
-      <entry key="S60" value="2.981215931764382" />
-      <entry key="M2" value="2.990581971637418" />
-      <entry key="M5" value="2.996226529365982" />
-      <entry key="M10" value="2.9981122197405816" />
-      <entry key="M15" value="2.998741247489481" />
-      <entry key="M30" value="2.9993705075438983" />
-      <entry key="H1" value="2.9996852247157273" />
-      <entry key="H2" value="2.9998426050930562" />
-      <entry key="H4" value="2.999921300730232" />
-      <entry key="D1" value="2.9999868832027676" />
-      <entry key="W1" value="2.9999981261656457" />
+      <entry key="MS100" value="0.3339186245372727" />
+      <entry key="MS500" value="1.3571455100880572" />
+      <entry key="S2" value="1.8124931244908669" />
+      <entry key="S5" value="1.929012833968997" />
+      <entry key="S10" value="2.140501703876196" />
+      <entry key="S30" value="3.6363398179865345" />
+      <entry key="S60" value="4.86515846689269" />
+      <entry key="M2" value="5.785964568843916" />
+      <entry key="M5" value="6.473783198427322" />
+      <entry key="M10" value="6.72961488874591" />
+      <entry key="M15" value="6.818086161528752" />
+      <entry key="M30" value="6.908204286241001" />
+      <entry key="H1" value="6.953890501129945" />
+      <entry key="H2" value="6.976892095177095" />
+      <entry key="H4" value="6.988432728006301" />
+      <entry key="D1" value="6.998070268777916" />
+      <entry key="W1" value="6.999724278708269" />
     </decayedShown>
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
@@ -115,82 +118,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "main",
-    "git.auto.fetch.suggestion.counter": "1",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/André Greubel/Documents/Git/localConnectionHp",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Artifacts",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git.auto.fetch.suggestion.counter&quot;: &quot;1&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/André Greubel/Documents/Git/localConnectionHp&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   }
-}]]></component>
-  <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="bus-homepage" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="bus-homepage" />
-      <option name="filePath" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <module name="bus-homepage" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="DEBUG_JUST_MY_CODE" value="false" />
-      <option name="RUN_TOOL" value="" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Tox" factoryName="Tox">
-      <module name="bus-homepage" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="DEBUG_JUST_MY_CODE" value="false" />
-      <option name="RUN_TOOL" value="" />
-      <method v="2" />
-    </configuration>
-  </component>
+}</component>
   <component name="ScalaProjectSettings">
     <option name="migrateConfigurationsNotificationShown" value="true" />
   </component>
@@ -201,9 +153,6 @@
         <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.25134.95" />
       </set>
     </attachedChunks>
-  </component>
-  <component name="ShouldUpdateRunConfigurations">
-    <option name="isDowngrading" />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -229,7 +178,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783239606934</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="new workplace init">
+      <option name="closed" value="true" />
+      <created>1783240256772</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1783240256772</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -237,6 +194,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added Gitignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Gitignore" />
+    <MESSAGE value="new workplace init" />
+    <option name="LAST_COMMIT_MESSAGE" value="new workplace init" />
   </component>
 </project>
