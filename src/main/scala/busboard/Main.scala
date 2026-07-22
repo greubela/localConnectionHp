@@ -31,11 +31,11 @@ object Main:
   private def application: Element =
     mainTag(
       cls := "app",
-      header(cls := "topbar",
+      headerTag(cls := "topbar",
         div(p(cls := "eyebrow", "Live-Verbindungen"), h1("Meine Verbindungen")),
         div(cls := "status", child.text <-- status.signal)
       ),
-      section(cls := "controls", children <-- active.signal.map { selected =>
+      sectionTag(cls := "controls", children <-- active.signal.map { selected =>
         configs.map { config =>
           button(
             cls := s"route-toggle ${if selected(config.id) then "active" else ""}",
@@ -47,7 +47,7 @@ object Main:
           )
         }
       }),
-      section(cls := "cards", children <-- overviews.signal.combineWith(errors.signal).map { (items, failures) =>
+      sectionTag(cls := "cards", children <-- overviews.signal.combineWith(errors.signal).map { (items, failures) =>
         val selected = configs.filter(c => active.now()(c.id))
         selected.map { config =>
           items.find(_.config.id == config.id) match
@@ -76,39 +76,47 @@ object Main:
     resolveStations(config.stations).flatMap { stations =>
       HafasClient.journeys(stations.head._2, stations(1)._2, config.results, None, config.products).flatMap { result =>
         Future.sequence(journeys(result).map(first => extend(config, stations, 1, Seq(first))))
-          .map(found => ConnectionOverview(config, found.flatten.map(toConnection(config, stations)).sortBy(_.departures.head)))
+          .map(found => ConnectionOverview(config, found.flatten.flatMap(toConnection(config, stations)).sortBy(_.departures.head)))
       }
     }.map(Right(_)).recover { case error => Left(config.id -> s"Verbindung konnte nicht geladen werden: ${error.getMessage}") }
 
   private def extend(config: ConnectionConfig, stations: Seq[(Station, String)], index: Int, accumulated: Seq[js.Dynamic]): Future[Option[Seq[js.Dynamic]]] =
     if index >= stations.size - 1 then Future.successful(Some(accumulated))
     else
-      val departure = legs(accumulated.last).lastOption.flatMap(value => string(value.arrival))
+      val departure = legs(accumulated.last).lastOption.flatMap(arrivalTime)
       HafasClient.journeys(stations(index)._2, stations(index + 1)._2, 1, departure, config.products)
         .flatMap(result => journeys(result).headOption match
           case Some(next) => extend(config, stations, index + 1, accumulated :+ next)
           case None => Future.successful(None))
 
-  private def toConnection(config: ConnectionConfig, stations: Seq[(Station, String)])(parts: Seq[js.Dynamic]): Connection =
-    val connectionLegs = parts.zipWithIndex.map { (journey, index) =>
+  private def toConnection(config: ConnectionConfig, stations: Seq[(Station, String)])(parts: Seq[js.Dynamic]): Option[Connection] =
+    val parsedLegs = parts.zipWithIndex.map { (journey, index) =>
       val partLegs = legs(journey)
-      val departure = localDateTime(partLegs.head.departure)
-      val arrival = localDateTime(partLegs.last.arrival)
-      val delay = Duration.ofSeconds(number(partLegs.head.departureDelay).getOrElse(0d).toLong)
-      val lines = partLegs.flatMap(leg => obj(leg.line).flatMap(line => string(line.name))).distinct
-      ConnectionLeg(stations(index)._1.name, stations(index + 1)._1.name, departure, arrival, delay, lines)
+      for
+        firstLeg <- partLegs.headOption
+        lastLeg <- partLegs.lastOption
+        departure <- departureTime(firstLeg).flatMap(localDateTime)
+        arrival <- arrivalTime(lastLeg).flatMap(localDateTime)
+      yield
+        val delay = Duration.ofSeconds(number(firstLeg.departureDelay).getOrElse(0d).toLong)
+        val lines = partLegs.flatMap(leg => obj(leg.line).flatMap(line => string(line.name))).distinct
+        ConnectionLeg(stations(index)._1.name, stations(index + 1)._1.name, departure, arrival, delay, lines)
     }
-    val first = connectionLegs.head.departure
-    val last = connectionLegs.last.arrival
-    Connection(config, connectionLegs.map(_.departure), connectionLegs.map(_.delay), last,
-      Duration.between(first, last), (parts.flatMap(legs).count(leg => obj(leg.line).nonEmpty) - 1).max(0), connectionLegs)
+    if parsedLegs.exists(_.isEmpty) then None
+    else
+      val connectionLegs = parsedLegs.flatten
+      for
+        first <- connectionLegs.headOption
+        last <- connectionLegs.lastOption
+      yield Connection(config, connectionLegs.map(_.departure), connectionLegs.map(_.delay), last.arrival,
+        Duration.between(first.departure, last.arrival), (parts.flatMap(legs).count(leg => obj(leg.line).nonEmpty) - 1).max(0), connectionLegs)
 
   private def overviewView(overview: ConnectionOverview): Element =
     routeCard(overview.config,
       if overview.connections.isEmpty then div(cls := "empty", "Aktuell wurde keine Verbindung gefunden.")
       else div(overview.connections.map(connectionView)))
 
-  private def routeCard(config: ConnectionConfig, body: Element): Element = article(cls := "card",
+  private def routeCard(config: ConnectionConfig, body: Element): Element = articleTag(cls := "card",
     div(cls := "card-head", div(h2(cls := "route-title", config.title), p(cls := "route-subtitle", config.stations.map(_.name).mkString(" → "))), div(cls := "badge", "DB")), body)
 
   private def connectionView(connection: Connection): Element =
@@ -136,12 +144,20 @@ object Main:
     }
 
   private def resolveStations(stations: Seq[Station]): Future[Seq[(Station, String)]] = Future.sequence(stations.map(station => station.id.fold(HafasClient.locations(station.name).map(values => values.head.id.toString))(Future.successful).map(station -> _)))
-  private def loadJson(url: String): Future[js.Dynamic] = dom.fetch(url).toFuture.flatMap(_.json().toFuture)
+  private def loadJson(url: String): Future[js.Dynamic] =
+    dom.fetch(url).toFuture.flatMap(_.json().toFuture).map(_.asInstanceOf[js.Dynamic])
   private def journeys(value: js.Dynamic): Seq[js.Dynamic] = value.journeys.asInstanceOf[js.UndefOr[js.Array[js.Dynamic]]].toOption.fold(Seq.empty)(_.toSeq)
   private def legs(value: js.Dynamic): Seq[js.Dynamic] = value.legs.asInstanceOf[js.Array[js.Dynamic]].toSeq
-  private def string(value: js.Any): Option[String] = value.asInstanceOf[js.UndefOr[String]].toOption
+  private def string(value: js.Any): Option[String] =
+    if value == null || js.isUndefined(value) then None else Some(value.toString)
   private def number(value: js.Any): Option[Double] = value.asInstanceOf[js.UndefOr[Double]].toOption
   private def obj(value: js.Any): Option[js.Dynamic] = value.asInstanceOf[js.UndefOr[js.Dynamic]].toOption
-  private def localDateTime(value: js.Any): LocalDateTime =
-    val date = new js.Date(value.toString)
-    LocalDateTime.of(date.getFullYear().toInt, date.getMonth().toInt + 1, date.getDate().toInt, date.getHours().toInt, date.getMinutes().toInt, date.getSeconds().toInt)
+  private def departureTime(leg: js.Dynamic): Option[String] =
+    string(leg.departure).orElse(string(leg.plannedDeparture))
+  private def arrivalTime(leg: js.Dynamic): Option[String] =
+    string(leg.arrival).orElse(string(leg.plannedArrival))
+  private def localDateTime(value: String): Option[LocalDateTime] =
+    val date = new js.Date(value)
+    if date.getTime().isNaN then None
+    else Some(LocalDateTime.of(date.getFullYear().toInt, date.getMonth().toInt + 1, date.getDate().toInt,
+      date.getHours().toInt, date.getMinutes().toInt, date.getSeconds().toInt))
