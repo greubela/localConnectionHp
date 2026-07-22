@@ -15,14 +15,7 @@ private object BvgProfile extends js.Object
 
 /** Thin Scala.js facade around hafas-client, using the VBB/BVG profile for Berlin routes. */
 object HafasClient:
-  // The profile's legacy URL redirects without a CORS header. Point directly at
-  // the redirect target so browsers can complete the request.
-  private val profile = js.Object.assign(
-    js.Dynamic.literal(),
-    BvgProfile,
-    js.Dynamic.literal(endpoint = "https://bvg.hafas.cloud/apps/gate")
-  )
-  private val client = CreateClient(profile, "local-connection-homepage")
+  private val client = CreateClient(BvgProfile, "local-connection-homepage")
 
   def locations(query: String): Future[js.Array[js.Dynamic]] =
     client.locations(query, js.Dynamic.literal(results = 1, stops = true, poi = false, addresses = false))
