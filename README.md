@@ -46,5 +46,6 @@ Stop IDs are optional. If omitted, the public VBB transport.rest API resolves th
 ## Notes
 
 - Uses Laminar and the public VBB transport.rest API for the configured Berlin-area routes. Calling the REST API directly avoids shipping a provider profile and its private authentication data to the browser.
+- Journey requests omit intermediate stop details and remarks because the overview only uses legs, times, delays, and line names. This keeps the public HAFAS queries as small as possible.
 - Refreshes active routes every 60 seconds.
 - VBB access is isolated in `HafasClient.scala`; the Laminar application maps its results into typed connection models before rendering.
