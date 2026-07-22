@@ -10,12 +10,12 @@ private object CreateClient extends js.Object:
   def apply(profile: js.Any, userAgent: String): js.Dynamic = js.native
 
 @js.native
-@JSImport("hafas-client/p/db/index.js", "profile")
-private object DbProfile extends js.Object
+@JSImport("hafas-client/p/bvg/index.js", "profile")
+private object BvgProfile extends js.Object
 
-/** Thin Scala.js facade around hafas-client, using Deutsche Bahn throughout Germany. */
+/** Thin Scala.js facade around hafas-client, using the VBB/BVG profile for Berlin routes. */
 object HafasClient:
-  private val client = CreateClient(DbProfile, "local-connection-homepage")
+  private val client = CreateClient(BvgProfile, "local-connection-homepage")
 
   def locations(query: String): Future[js.Array[js.Dynamic]] =
     client.locations(query, js.Dynamic.literal(results = 1, stops = true, poi = false, addresses = false))

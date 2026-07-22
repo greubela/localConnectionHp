@@ -68,7 +68,7 @@ object Main:
       Future.sequence(selected.map(loadOverview)).foreach { results =>
         overviews.set(results.collect { case Right(value) => value })
         errors.set(results.collect { case Left((id, message)) => id -> message }.toMap)
-        status.set(s"Aktualisiert ${LocalDateTime.now().format(timeFormat)}")
+        status.set(s"Aktualisiert ${currentLocalTime()}")
         refreshing = false
       }
 
@@ -161,3 +161,6 @@ object Main:
     if date.getTime().isNaN then None
     else Some(LocalDateTime.of(date.getFullYear().toInt, date.getMonth().toInt + 1, date.getDate().toInt,
       date.getHours().toInt, date.getMinutes().toInt, date.getSeconds().toInt))
+  private def currentLocalTime(): String =
+    val now = new js.Date()
+    f"${now.getHours().toInt}%02d:${now.getMinutes().toInt}%02d"

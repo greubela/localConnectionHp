@@ -13,7 +13,7 @@ lazy val root = project.in(file("."))
       "io.github.cquiroz" %%% "scala-java-time" % "2.6.0"
     ),
     Compile / npmDependencies ++= Seq(
-      "hafas-client" -> "6.0.0",
+      "hafas-client" -> "6.3.6",
       // hafas-client still imports Node core modules when bundled for a browser.
       "assert" -> "2.1.0",
       "buffer" -> "6.0.3",
