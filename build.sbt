@@ -5,5 +5,9 @@ lazy val root = project.in(file("."))
   .settings(
     name := "bus-homepage",
     scalaJSUseMainModuleInitializer := true,
-    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.0"
+    webpack / version := "5.91.0",
+    libraryDependencies ++= Seq(
+      "com.raquo" %%% "laminar" % "17.0.0"
+    ),
+    npmDependencies in Compile += "hafas-client" -> "6.0.0"
   )

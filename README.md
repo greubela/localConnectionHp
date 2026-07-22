@@ -5,28 +5,15 @@ Small Scala.js/SBT homepage for live VBB/HAFAS-based connection previews.
 ## Run locally
 
 ```bash
-sbt fastLinkJS
+sbt "fastLinkJS / webpack"
 python3 -m http.server 8080
 ```
 
 Open <http://localhost:8080>.
 
-## Configure refresh behavior
-
-Edit `config.json` to set shared application settings. `refreshSeconds` controls how often the board automatically reloads all active routes; `minimumRefreshSeconds` guards against accidental rapid polling, and `requestTimeoutSeconds` aborts slow route loads before they can pile up.
-
-```json
-{
-  "apiBase": "https://v6.vbb.transport.rest",
-  "refreshSeconds": 60,
-  "minimumRefreshSeconds": 15,
-  "requestTimeoutSeconds": 25
-}
-```
-
 ## Configure routes
 
-Edit `routes.json`. Routes may use stop IDs or names. Names are resolved via `/locations` at runtime; IDs are faster and more stable.
+Edit `routes.json`. Routes may use stop IDs or names. Names are resolved through `hafas-client` at runtime; IDs are faster and more stable.
 
 ```json
 {
@@ -54,10 +41,10 @@ Routes can force a precise multi-stop path by adding `waypoints` (or `via`). The
 }
 ```
 
-If a route resolves to the wrong stop, query `https://v6.vbb.transport.rest/locations?query=...` once, copy the stop `id`, and add it to `routes.json`.
+Stop IDs are optional. If omitted, `hafas-client` resolves the station name with the Deutsche Bahn profile; adding an ID makes a configuration unambiguous.
 
 ## Notes
 
-- Uses `https://v6.vbb.transport.rest`, a REST wrapper around VBB/HAFAS data.
-- Refreshes every 60 seconds by default; adjust `refreshSeconds` in `config.json`.
-- The code is intentionally compact and script-like. API access is concentrated in `loadJson`, `stopId`, and `journeyUrl`.
+- Uses Laminar and `hafas-client` 6 directly from Scala.js, with hafas-client's Deutsche Bahn profile as the Germany-wide default.
+- Refreshes active routes every 60 seconds.
+- HAFAS access is isolated in `HafasClient.scala`; the Laminar application maps its results into typed connection models before rendering.
