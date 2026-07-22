@@ -1,29 +1,40 @@
 package busboard
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js
-import scala.scalajs.js.annotation.JSImport
+import scala.scalajs.js.Thenable.Implicits.*
+import org.scalajs.dom
 
-@js.native
-@JSImport("hafas-client", "createClient")
-private object CreateClient extends js.Object:
-  def apply(profile: js.Any, userAgent: String): js.Dynamic = js.native
-
-@js.native
-@JSImport("hafas-client/p/bvg/index.js", "profile")
-private object BvgProfile extends js.Object
-
-/** Thin Scala.js facade around hafas-client, using the VBB/BVG profile for Berlin routes. */
+/** Thin client for the public VBB transport.rest API. */
 object HafasClient:
-  private val client = CreateClient(BvgProfile, "local-connection-homepage")
+  private val apiBase = "https://v6.vbb.transport.rest"
 
   def locations(query: String): Future[js.Array[js.Dynamic]] =
-    client.locations(query, js.Dynamic.literal(results = 1, stops = true, poi = false, addresses = false))
-      .asInstanceOf[js.Promise[js.Array[js.Dynamic]]].toFuture
+    get("locations", Seq(
+      "query" -> query,
+      "results" -> "1",
+      "stops" -> "true",
+      "poi" -> "false",
+      "addresses" -> "false"
+    )).map(_.asInstanceOf[js.Array[js.Dynamic]])
 
   def journeys(from: String, to: String, results: Int, departure: Option[String], products: Map[String, Boolean]): Future[js.Dynamic] =
-    val options = js.Dynamic.literal(results = results, stopovers = true, remarks = true, language = "de")
-    departure.foreach(value => options.updateDynamic("departure")(value))
-    if products.nonEmpty then
-      options.updateDynamic("products")(js.Dictionary(products.toSeq*))
-    client.journeys(from, to, options).asInstanceOf[js.Promise[js.Dynamic]].toFuture
+    val parameters = Seq(
+      "from" -> from,
+      "to" -> to,
+      "results" -> results.toString,
+      "stopovers" -> "true",
+      "remarks" -> "true",
+      "language" -> "de"
+    ) ++ departure.map("departure" -> _) ++ products.map((name, enabled) => name -> enabled.toString)
+    get("journeys", parameters).map(_.asInstanceOf[js.Dynamic])
+
+  private def get(path: String, parameters: Iterable[(String, String)]): Future[js.Any] =
+    val query = parameters.map((name, value) => s"${encode(name)}=${encode(value)}").mkString("&")
+    dom.fetch(s"$apiBase/$path?$query").toFuture.flatMap { response =>
+      if response.ok then response.json().toFuture
+      else Future.failed(new RuntimeException(s"VBB API request failed (${response.status} ${response.statusText})"))
+    }
+
+  private def encode(value: String): String = js.URIUtils.encodeURIComponent(value)
