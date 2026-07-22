@@ -31,11 +31,11 @@ object Main:
   private def application: Element =
     mainTag(
       cls := "app",
-      header(cls := "topbar",
+      headerTag(cls := "topbar",
         div(p(cls := "eyebrow", "Live-Verbindungen"), h1("Meine Verbindungen")),
         div(cls := "status", child.text <-- status.signal)
       ),
-      section(cls := "controls", children <-- active.signal.map { selected =>
+      sectionTag(cls := "controls", children <-- active.signal.map { selected =>
         configs.map { config =>
           button(
             cls := s"route-toggle ${if selected(config.id) then "active" else ""}",
@@ -47,7 +47,7 @@ object Main:
           )
         }
       }),
-      section(cls := "cards", children <-- overviews.signal.combineWith(errors.signal).map { (items, failures) =>
+      sectionTag(cls := "cards", children <-- overviews.signal.combineWith(errors.signal).map { (items, failures) =>
         val selected = configs.filter(c => active.now()(c.id))
         selected.map { config =>
           items.find(_.config.id == config.id) match
@@ -108,7 +108,7 @@ object Main:
       if overview.connections.isEmpty then div(cls := "empty", "Aktuell wurde keine Verbindung gefunden.")
       else div(overview.connections.map(connectionView)))
 
-  private def routeCard(config: ConnectionConfig, body: Element): Element = article(cls := "card",
+  private def routeCard(config: ConnectionConfig, body: Element): Element = articleTag(cls := "card",
     div(cls := "card-head", div(h2(cls := "route-title", config.title), p(cls := "route-subtitle", config.stations.map(_.name).mkString(" → "))), div(cls := "badge", "DB")), body)
 
   private def connectionView(connection: Connection): Element =
@@ -136,7 +136,8 @@ object Main:
     }
 
   private def resolveStations(stations: Seq[Station]): Future[Seq[(Station, String)]] = Future.sequence(stations.map(station => station.id.fold(HafasClient.locations(station.name).map(values => values.head.id.toString))(Future.successful).map(station -> _)))
-  private def loadJson(url: String): Future[js.Dynamic] = dom.fetch(url).toFuture.flatMap(_.json().toFuture)
+  private def loadJson(url: String): Future[js.Dynamic] =
+    dom.fetch(url).toFuture.flatMap(_.json().toFuture).map(_.asInstanceOf[js.Dynamic])
   private def journeys(value: js.Dynamic): Seq[js.Dynamic] = value.journeys.asInstanceOf[js.UndefOr[js.Array[js.Dynamic]]].toOption.fold(Seq.empty)(_.toSeq)
   private def legs(value: js.Dynamic): Seq[js.Dynamic] = value.legs.asInstanceOf[js.Array[js.Dynamic]].toSeq
   private def string(value: js.Any): Option[String] = value.asInstanceOf[js.UndefOr[String]].toOption

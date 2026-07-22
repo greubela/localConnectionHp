@@ -5,7 +5,7 @@ Small Scala.js/SBT homepage for live VBB/HAFAS-based connection previews.
 ## Run locally
 
 ```bash
-sbt "fastLinkJS / webpack"
+sbt "Compile / fastOptJS / webpack"
 python3 -m http.server 8080
 ```
 
