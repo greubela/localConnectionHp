@@ -10,12 +10,19 @@ private object CreateClient extends js.Object:
   def apply(profile: js.Any, userAgent: String): js.Dynamic = js.native
 
 @js.native
-@JSImport("hafas-client/p/db/index.js", "profile")
-private object DbProfile extends js.Object
+@JSImport("hafas-client/p/bvg/index.js", "profile")
+private object BvgProfile extends js.Object
 
-/** Thin Scala.js facade around hafas-client, using Deutsche Bahn throughout Germany. */
+/** Thin Scala.js facade around hafas-client, using the VBB/BVG profile for Berlin routes. */
 object HafasClient:
-  private val client = CreateClient(DbProfile, "local-connection-homepage")
+  // The profile's legacy URL redirects without a CORS header. Point directly at
+  // the redirect target so browsers can complete the request.
+  private val profile = js.Object.assign(
+    js.Dynamic.literal(),
+    BvgProfile,
+    js.Dynamic.literal(endpoint = "https://bvg.hafas.cloud/apps/gate")
+  )
+  private val client = CreateClient(profile, "local-connection-homepage")
 
   def locations(query: String): Future[js.Array[js.Dynamic]] =
     client.locations(query, js.Dynamic.literal(results = 1, stops = true, poi = false, addresses = false))

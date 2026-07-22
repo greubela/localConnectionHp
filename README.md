@@ -41,10 +41,10 @@ Routes can force a precise multi-stop path by adding `waypoints` (or `via`). The
 }
 ```
 
-Stop IDs are optional. If omitted, `hafas-client` resolves the station name with the Deutsche Bahn profile; adding an ID makes a configuration unambiguous.
+Stop IDs are optional. If omitted, `hafas-client` resolves the station name with the VBB/BVG profile; adding an ID makes a configuration unambiguous.
 
 ## Notes
 
-- Uses Laminar and `hafas-client` 6 directly from Scala.js, with hafas-client's Deutsche Bahn profile as the Germany-wide default.
+- Uses Laminar and `hafas-client` 6 directly from Scala.js, with hafas-client's VBB/BVG profile for the configured Berlin-area routes.
 - Refreshes active routes every 60 seconds.
 - HAFAS access is isolated in `HafasClient.scala`; the Laminar application maps its results into typed connection models before rendering.
