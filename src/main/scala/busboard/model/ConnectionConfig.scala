@@ -1,4 +1,6 @@
-package busboard
+package busboard.model
+
+import busboard.Station
 
 case class ConnectionConfig(
     id: String,

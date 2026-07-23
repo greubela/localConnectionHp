@@ -1,4 +1,4 @@
-package busboard
+package busboard.model
 
 import java.time.{Duration, LocalDateTime}
 

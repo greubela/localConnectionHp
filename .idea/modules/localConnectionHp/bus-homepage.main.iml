@@ -16,9 +16,17 @@
     <orderEntry type="library" name="sbt: scala-sdk-3.3.3" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang:scala3-library_sjs1_3:3.3.3:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-js:scalajs-library_2.13:1.16.0:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.scala-js:scalajs-dom_sjs1_3:2.8.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.raquo:laminar_sjs1_3:17.0.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.github.cquiroz:scala-java-time_sjs1_3:2.6.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang:scala-library:2.13.13:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-js:scalajs-javalib:1.16.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-js:scalajs-scalalib_2.13:2.13.13+1.16.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.raquo:airstream_sjs1_3:17.0.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.raquo:ew_sjs1_3:0.2.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.portable-scala:portable-scala-reflect_sjs1_2.13:1.1.3:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.github.cquiroz:scala-java-locales_sjs1_3:1.5.4:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scala-js:scalajs-dom_sjs1_3:2.8.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: app.tulz:tuplez-full-light_sjs1_3:0.4.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.github.cquiroz:cldr-api_sjs1_3:4.5.0:jar" level="project" />
   </component>
 </module>

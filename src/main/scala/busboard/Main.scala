@@ -1,7 +1,9 @@
 package busboard
 
+import busboard.model.{Connection, ConnectionConfig, ConnectionLeg, ConnectionOverview}
 import com.raquo.laminar.api.L.*
 import org.scalajs.dom
+
 import java.time.{Duration, LocalDateTime}
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}

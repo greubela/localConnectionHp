@@ -1,5 +1,4 @@
 {
-  "apiBase": "https://v6.vbb.transport.rest",
   "refreshSeconds": 60,
   "minimumRefreshSeconds": 15,
   "requestTimeoutSeconds": 25
