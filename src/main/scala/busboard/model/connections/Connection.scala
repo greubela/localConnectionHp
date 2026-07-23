@@ -1,17 +1,14 @@
 package busboard.model.connections
 
-import busboard.model.*
-import busboard.model.info.*
+import busboard.model.info.Route
+import java.time.Duration
 
-import java.time.{Duration, LocalDateTime}
+case class Connection(route: Route, legs: Seq[ConnectionLeg]):
+  def duration: Duration = legs.headOption.zip(legs.lastOption)
+    .map((first, last) => Duration.between(first.departure, last.arrival)).getOrElse(Duration.ZERO)
+  def isPossible: Boolean = legs.zip(legs.drop(1)).forall((first, next) =>
+    !first.arrival.plus(first.delay).isAfter(next.departure.plus(next.delay)))
 
-case class Connection(
-                       route: Route,
-                       legs: Seq[ConnectionLeg]
-                     ) {
-  def duration: Duration = ???
-
-  def isPossible: Boolean = ??? // transfer possible because no one arrives after the other left because of delays
-
-}
-
+  /** Time available at each change, including the delays known for both legs. */
+  def ChangingTimes(): Seq[Duration] = legs.zip(legs.drop(1)).map((first, next) =>
+    Duration.between(first.arrival.plus(first.delay), next.departure.plus(next.delay)))
