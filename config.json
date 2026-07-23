@@ -1,5 +1,0 @@
-{
-  "refreshSeconds": 60,
-  "minimumRefreshSeconds": 15,
-  "requestTimeoutSeconds": 25
-}

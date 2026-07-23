@@ -1,8 +1,11 @@
 package busboard.model
 
-import busboard.model.{Connection, ConnectionConfig}
+import busboard.model.connections.*
 
-case class ConnectionOverview(
-    config: ConnectionConfig,
-    connections: Seq[Connection]
-)
+case class ConnectionOverview
+(
+  config: Config,
+  connections: Seq[Connection]
+) {
+
+}

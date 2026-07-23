@@ -1,6 +1,7 @@
 package busboard
 
-import busboard.model.{Connection, ConnectionConfig, ConnectionLeg, ConnectionOverview}
+import busboard.model.connections.{Connection, ConnectionLeg}
+import busboard.model.{ConnectionConfig, ConnectionOverview}
 import com.raquo.laminar.api.L.*
 import org.scalajs.dom
 

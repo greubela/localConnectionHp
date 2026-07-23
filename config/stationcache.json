@@ -1,0 +1,17 @@
+[
+    {
+        "evaId": "900083201",
+		"stationName": "U Rudow (Berlin)",
+		"displayName": "U Rudow"
+    },
+    {
+        "evaId": "900194501",
+		"stationName": "Magnusstr. (Berlin)",
+		"displayName": "Arbeit"
+    },
+	{
+		"evaId": "900260519",
+		"stationName": "Schwimmhalle (Schönefeld)",
+		"displayName": "Daheim (Schwimmhalle)"
+	}
+]

@@ -1,0 +1,8 @@
+{
+    "routeStrings": [
+        "Berlin Hbf -> Würburg Hbf",
+        "Arbeit -> S Schönefeld"
+    ],
+    "refreshSeconds": 180,
+    "requestTimeoutSeconds": 25
+}

@@ -5,7 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="10d21990-89b4-46e2-be64-f34fa47f98be" name="Changes" comment="minor">
-      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/model/Station.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/Station.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/Config.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/info/Route.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/Main.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/Station.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/model/Connection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/connections/Connection.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/model/ConnectionConfig.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/model/ConnectionLeg.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/connections/ConnectionLeg.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/model/ConnectionOverview.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/ConnectionOverview.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/model/Station.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/info/Station.scala" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -142,6 +152,11 @@
     "project.structure.side.proportion": "0.2"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\André Greubel\Documents\Git\localConnectionHp\src\main\scala\busboard\model\info" />
+    </key>
+  </component>
   <component name="ScalaProjectSettings">
     <option name="migrateConfigurationsNotificationShown" value="true" />
   </component>
