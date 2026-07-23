@@ -6,9 +6,7 @@ case class Station
   stationName: String,
   displayName: Option[String]
 ) {
-
   def displayString: String = displayName.getOrElse(stationName)
-
 }
 
 object Station {
@@ -20,5 +18,7 @@ object Station {
   val displayNames: Map[Station, String] = Map(
 
   )
+  
+  
 
 }

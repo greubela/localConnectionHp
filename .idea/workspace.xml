@@ -4,20 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="10d21990-89b4-46e2-be64-f34fa47f98be" name="Changes" comment="new workplace init">
-      <change afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/Station.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.bsp/sbt.json" beforeDir="false" afterPath="$PROJECT_DIR$/.bsp/sbt.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/localConnectionHp/bus-homepage.bus-homepage-build.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/localConnectionHp/bus-homepage.bus-homepage-build.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/localConnectionHp/bus-homepage.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/localConnectionHp/bus-homepage.main.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/localConnectionHp/bus-homepage.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/localConnectionHp/bus-homepage.test.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/compile_and_start.sh" beforeDir="false" afterPath="$PROJECT_DIR$/compile_and_start.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/Connection.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/Connection.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/ConnectionConfig.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/ConnectionConfig.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/ConnectionLeg.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/ConnectionLeg.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/ConnectionOverview.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/ConnectionOverview.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/Main.scala" afterDir="false" />
+    <list default="true" id="10d21990-89b4-46e2-be64-f34fa47f98be" name="Changes" comment="minor">
+      <change beforePath="$PROJECT_DIR$/src/main/scala/busboard/model/Station.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/busboard/model/Station.scala" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,6 +193,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added Gitignore" />
     <MESSAGE value="new workplace init" />
-    <option name="LAST_COMMIT_MESSAGE" value="new workplace init" />
+    <MESSAGE value="minor" />
+    <option name="LAST_COMMIT_MESSAGE" value="minor" />
   </component>
 </project>
