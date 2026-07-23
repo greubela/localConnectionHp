@@ -24,8 +24,11 @@ object HafasClient:
       "from" -> from,
       "to" -> to,
       "results" -> results.toString,
-      "stopovers" -> "true",
-      "remarks" -> "true",
+      // The overview only consumes each journey's legs. Expanding every
+      // intermediate stop and loading all remarks makes HAFAS do considerably
+      // more work without changing anything displayed by the application.
+      "stopovers" -> "false",
+      "remarks" -> "false",
       "language" -> "de"
     ) ++ departure.map("departure" -> _) ++ products.map((name, enabled) => name -> enabled.toString)
     get("journeys", parameters).map(_.asInstanceOf[js.Dynamic])
