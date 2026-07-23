@@ -30,6 +30,9 @@ object HafasClient:
     ) ++ departure.map("departure" -> _) ++ products.map((name, enabled) => name -> enabled.toString)
     get("journeys", parameters).map(_.asInstanceOf[js.Dynamic])
 
+  def station(id: String): Future[js.Dynamic] =
+    get(s"stops/${encode(id)}", Seq.empty).map(_.asInstanceOf[js.Dynamic])
+
   private def get(path: String, parameters: Iterable[(String, String)]): Future[js.Any] =
     val query = parameters.map((name, value) => s"${encode(name)}=${encode(value)}").mkString("&")
     dom.fetch(s"$apiBase/$path?$query").toFuture.flatMap { response =>

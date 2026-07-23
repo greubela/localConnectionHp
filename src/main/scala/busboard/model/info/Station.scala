@@ -1,34 +1,13 @@
 package busboard.model.info
 
-case class Station
-(
-  evaId: Int,
-  stationName: String,
-  displayName: Option[String]
-) {
+case class Station(evaId: Int, stationName: String, displayName: Option[String]):
   def displayString: String = displayName.getOrElse(stationName)
+  def storageString: String = evaId.toString
 
-  def storageString: String = evaId + ""
-  
-}
-
-object Station {
-
-  def fromEvaId(int: Int) = // look at local cache first, then resolve with hafas
-  
-  def fromName(name: String) = ??? // look first at the loaded cache, only after that resolve with hafas
-  
-  def loadCache(): Map[Int, Station] = ??? // load from file /config/stationcache.json
-  
-  def storeCache(cache: Map[Int, Station]) = ??? // store to file /config/stationcache.json
-  
-  val stationCache: Map[Int, Station] = Map(
-
-  )
-
-  val displayNames: Map[Station, String] = Map(
-
-  )
-
-
-}
+object Station:
+  private var stations = Map.empty[Int, Station]
+  def setCache(values: Iterable[Station]): Unit = stations = values.map(s => s.evaId -> s).toMap
+  def cache(station: Station): Station = { stations += station.evaId -> station; station }
+  def fromEvaId(evaId: Int): Option[Station] = stations.get(evaId)
+  def fromName(name: String): Option[Station] = stations.values.find(s =>
+    s.stationName.equalsIgnoreCase(name) || s.displayName.exists(_.equalsIgnoreCase(name)))

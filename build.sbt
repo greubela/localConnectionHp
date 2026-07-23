@@ -6,7 +6,7 @@ lazy val root = project.in(file("."))
   .settings(
     name := "bus-homepage",
     scalaJSUseMainModuleInitializer := true,
-    webpack / version := "5.91.0",
+    Compile / webpack / version := "5.91.0",
     webpackConfigFile := Some(baseDirectory.value / "webpack.config.js"),
     libraryDependencies ++= Seq(
       "com.raquo" %%% "laminar" % "17.0.0",
