@@ -5,11 +5,17 @@ Small Scala.js/SBT homepage for live VBB/HAFAS-based connection previews.
 ## Run locally
 
 ```bash
-sbt "Compile / fastOptJS / webpack"
-python3 -m http.server 8080
+sbt deployAll
+python3 -m http.server 8080 --directory target/deploy
 ```
 
 Open <http://localhost:8080>.
+
+`deployAll` performs one production (`fullLinkJS`) build and collects the
+JavaScript bundle, HTML, stylesheet, and configuration under `target/deploy`.
+It deliberately does not build the development-only `fastOptJS` output. The
+application has no npm imports, so the Scala.js output is deployed directly
+without an unnecessary webpack pass or npm dependency installation.
 
 ## Configure routes
 
